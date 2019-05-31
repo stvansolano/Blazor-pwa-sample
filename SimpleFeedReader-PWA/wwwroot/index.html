@@ -1,12 +1,12 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en-us">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>SimpleFeedReader-PWA</title>
     <base href="/" />
-    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
-    <link href="css/site.css" rel="stylesheet" />
+    <link async href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link async href="css/site.css" rel="stylesheet" />
 
     <link rel="manifest" href="manifest.json">
     <link rel="script" href="serviceworker.js">
@@ -17,12 +17,12 @@
 
     <script src="_framework/blazor.webassembly.js"></script>
     <script>
-        if ('serviceWorker' in navigator) {
-            console.log('Registering service worker now');
-            navigator.serviceWorker.register('./serviceworker.js')
-                .then(function () {
-                    console.log('Service Worker Registered');
-                });
+        if (navigator.serviceWorker) {
+          navigator.serviceWorker.register('/serviceworker.js').then(function(registration) {
+            console.log('ServiceWorker registration successful with scope:',  registration.scope);
+          }).catch(function(error) {
+            console.log('ServiceWorker registration failed:', error);
+          });
         }
     </script>
 </body>
