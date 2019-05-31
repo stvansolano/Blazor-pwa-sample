@@ -7,6 +7,7 @@ namespace SimpleFeedReader_PWA
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<CityViewModel>();
         }
 
         public void Configure(IComponentsApplicationBuilder app)

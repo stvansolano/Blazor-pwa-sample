@@ -1,4 +1,5 @@
 ﻿@page "/forecast"
+@inject SimpleFeedReader_PWA.CityViewModel Model
 
 <h1>Weather forecast</h1>
 
@@ -8,9 +9,11 @@
     <div class="row">
         <form class="form-inline" action="/" method="post">
             <div class="form-group">
-                <input name="city" type="text" class="form-control" placeholder="Enter City Name" required="">
+
+                @* INPUT VALUE HERE *@
+                <input bind="@Model.City" type="text" class="form-control" placeholder="Enter City Name" required=""/>
             </div>
-            <button type="submit" class="btn btn-success" value="Get Weather">Get Weather</button>
+            <button type="button" onclick="@FetchWeather" class="btn btn-success">Get Weather</button>
         </form>
     </div>
     @if (weather == null)
@@ -47,8 +50,8 @@
                                         c14.925-6.206,28.283-16.905,37.606-30.127c9.426-13.206,15.072-29.36,15.893-45.438
                                         C301.476,130.293,296.679,113.399,287.166,100.421z" />
                                 </g>
-                                    <g>
-                                    <path style="fill:#FFFFFF;" d="M106.617,209.839c0.664-0.027,1.463-0.038,2.23-0.038l5.445,0.065
+                                <g>
+                                <path style="fill:#FFFFFF;" d="M106.617,209.839c0.664-0.027,1.463-0.038,2.23-0.038l5.445,0.065
                                         c1.528,0.027,2.959,0.049,4.395,0.049c2.801,0,6.511-0.076,10.438-0.647c7.626-1.246,14.849-4.471,20.864-9.312
                                         c12.374-9.752,18.874-25.999,16.562-41.391c-2.371-15.648-15.953-28.697-31.547-30.35c-8.539-1.05-16.421,0.979-22.404,5.619
                                         c-6.451,4.824-10.688,12.091-11.612,19.842c-1.229,8.077,1.806,16.589,7.664,21.637c5.803,5.287,15.431,7.43,22.387,5.037
@@ -57,7 +60,7 @@
                                         c4.449-3.176,9.284-4.286,15.349-3.405c11.123,1.441,20.603,10.943,22.077,22.229c1.996,11.335-2.877,24.013-12.173,31.585
                                         c-4.585,3.867-10.193,6.494-16.236,7.604c-2.469,0.479-4.922,0.571-7.647,0.642l-104.506,2.752
                                         C10.264,203.524,5.134,203.9,0,204.275l0.19,5.434L106.617,209.839z" />
-                                    </g>
+                                </g>
                                   </g>
                                 </g>
               
@@ -76,120 +79,61 @@
     }
 </div>
 
-    @if (forecasts == null)
-    {
-        <p><em>Loading...</em></p>
-    }
-    else
-    {
-        <table class="table">
-            <thead>
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in forecasts)
+            {
                 <tr>
-                    <th>Date</th>
-                    <th>Temp. (C)</th>
-                    <th>Temp. (F)</th>
-                    <th>Summary</th>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach (var forecast in forecasts)
-                {
-                    <tr>
-                        <td>@forecast.Date.ToShortDateString()</td>
-                        <td>@forecast.TemperatureC</td>
-                        <td>@forecast.TemperatureF</td>
-                        <td>@forecast.Summary</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
+            }
+        </tbody>
+    </table>
+}
 
-    @functions {
-        WeatherForecast[] forecasts;
+@functions {
+        SimpleFeedReader_PWA.WeatherForecast[] forecasts;
         const string apiKey = "2505b29b62b6f1f3b005a797918852ee";
-        WeatherResult weather = null;
+        SimpleFeedReader_PWA.WeatherResult weather = null;
 
-        protected override async Task OnInitAsync()
-        {
-            //forecasts = await Http.GetJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+    protected override async System.Threading.Tasks.Task OnInitAsync()
+    {
+        //forecasts = await Http.GetJsonAsync<WeatherForecast[]>("sample-data/weather.json");
 
-            var url = "http://api.openweathermap.org/data/2.5/weather?q=" + "San Jose" + $"&units=imperial&appid={apiKey}";
-
-
-            var Http = new HttpClient();
-
-            weather = await Http.GetJsonAsync<WeatherResult>(url);
-        }
-
-        public class Coord
-        {
-            public double lon { get; set; }
-            public double lat { get; set; }
-        }
-
-        public class Weather
-        {
-            public int id { get; set; }
-            public string main { get; set; }
-            public string description { get; set; }
-            public string icon { get; set; }
-        }
-
-        public class Main
-        {
-            public double temp { get; set; }
-            public double pressure { get; set; }
-            public int humidity { get; set; }
-            public double temp_min { get; set; }
-            public double temp_max { get; set; }
-            public double sea_level { get; set; }
-            public double grnd_level { get; set; }
-        }
-
-        public class Wind
-        {
-            public double speed { get; set; }
-            public double deg { get; set; }
-        }
-
-        public class Clouds
-        {
-            public int all { get; set; }
-        }
-
-        public class Sys
-        {
-            public double message { get; set; }
-            public string country { get; set; }
-            public int sunrise { get; set; }
-            public int sunset { get; set; }
-        }
-
-        public class WeatherResult
-        {
-            public Coord coord { get; set; }
-            public List<Weather> weather { get; set; }
-            public string @base { get; set; }
-            public Main main { get; set; }
-            public Wind wind { get; set; }
-            public Clouds clouds { get; set; }
-            public int dt { get; set; }
-            public Sys sys { get; set; }
-            public int timezone { get; set; }
-            public int id { get; set; }
-            public string name { get; set; }
-            public int cod { get; set; }
-        }
-
-        class WeatherForecast
-        {
-            public DateTime Date { get; set; }
-
-            public int TemperatureC { get; set; }
-
-            public int TemperatureF { get; set; }
-
-            public string Summary { get; set; }
-        }
+        weather = await GetWeather(Model?.City ?? "San Jose");
     }
+
+    protected async void FetchWeather()
+    {
+        weather = await GetWeather(Model?.City ?? "San Jose");
+    }
+
+    private static async System.Threading.Tasks.Task<SimpleFeedReader_PWA.WeatherResult> GetWeather(string city)
+    {
+        if (string.IsNullOrEmpty(city))
+        {
+            city = "San Jose";
+        }
+        var url = "http://api.openweathermap.org/data/2.5/weather?q=" + city+ $"&units=imperial&appid={apiKey}";
+        var Http = new System.Net.Http.HttpClient();
+
+        return await Http.GetJsonAsync<SimpleFeedReader_PWA.WeatherResult>(url);
+    }
+}
