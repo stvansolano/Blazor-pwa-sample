@@ -1,5 +1,8 @@
-# Simple Feed Reader
+# Forecast PWA implementation
 
-This is a sample application used for [Azure guidance](https://docs.microsoft.com/aspnet/core/azure/?view=aspnetcore-2.1) tutorials.
+A Blazor sample application with some PWA capabilities
 
-This app retrieves an RSS feed and displays the results as a list.
+https://myblazordemo1.azurewebsites.net/forecast
+
+Twitter: @stvansolano
+Blog: https://stvansolano.github.io/blog
